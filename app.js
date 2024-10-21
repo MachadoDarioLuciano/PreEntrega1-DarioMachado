@@ -1,19 +1,19 @@
-// Array de productos con SKU, precio, nombre, imagen y categoría
-const productos = [
-    { sku: '001', nombre: 'Manzana', precio: 100, imagen: 'images/manzana.jpeg', categoria: 'Fruta' },
-    { sku: '002', nombre: 'Banana', precio: 55, imagen: 'images/banana.jpg', categoria: 'Fruta' },
-    { sku: '003', nombre: 'Zanahoria', precio: 33, imagen: 'images/zanahoria.jpeg', categoria: 'Verdura' },
-    { sku: '004', nombre: 'Naranja', precio: 68, imagen: 'images/naranja.jpeg', categoria: 'Fruta' },
-    { sku: '005', nombre: 'Frutilla', precio: 80, imagen: 'images/frutilla.jpeg', categoria: 'Fruta' },
-    { sku: '006', nombre: 'Pera', precio: 72, imagen: 'images/pera.jpg', categoria: 'Fruta' },
-    { sku: '007', nombre: 'Lechuga', precio: 25, imagen: 'images/lechuga.jpeg', categoria: 'Verdura' },
-    { sku: '008', nombre: 'Tomate', precio: 35, imagen: 'images/tomate.jpeg', categoria: 'Verdura' },
-    { sku: '009', nombre: 'Pepino', precio: 20, imagen: 'images/pepino.jpg', categoria: 'Verdura' },
-    { sku: '010', nombre: 'Uva', precio: 90, imagen: 'images/uva.jpeg', categoria: 'Fruta' }
-];
-
+let productos = [];
 let carrito = [];
 let total = 0;
+
+// Función para cargar los productos desde un archivo JSON
+function cargarProductos() {
+    fetch('data.json')  // Cargar el archivo JSON
+        .then(response => response.json())
+        .then(data => {
+            productos = data; // Guardar los datos en la variable productos
+            mostrarProductos(); // Mostrar los productos en la página
+        })
+        .catch(error => {
+            console.error("Error al cargar los productos: ", error);
+        });
+}
 
 // Función para agregar un producto al carrito
 function agregarAlCarrito(sku) {
@@ -75,8 +75,33 @@ function cargarCarritoDeStorage() {
     }
 }
 
-// Llamar a la función para mostrar los productos y cargar el carrito al cargar la página
+// Simular procesamiento de compra con una promesa y setTimeout
+function procesarCompra() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (carrito.length === 0) {
+                reject("El carrito está vacío");
+            } else {
+                resolve("Compra realizada");
+            }
+        }, 2000); // 2 segundos de espera simulada
+    });
+}
+
+// Evento para procesar la compra al hacer clic en el botón "Comprar"
+document.querySelector('#btn-comprar').addEventListener('click', () => {
+    procesarCompra()
+        .then((mensaje) => {
+            Swal.fire(mensaje);  // Muestra el mensaje de éxito
+            vaciarCarrito();  // Vacia el carrito tras la compra
+        })
+        .catch((error) => {
+            Swal.fire(error);  // Muestra el mensaje de error si el carrito está vacío
+        });
+});
+
+// Llamar a la función para cargar los productos y el carrito al cargar la página
 document.addEventListener('DOMContentLoaded', () => {
-    mostrarProductos();
+    cargarProductos(); // Llamar a cargar productos desde el archivo JSON
     cargarCarritoDeStorage();
 });
